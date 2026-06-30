@@ -277,9 +277,27 @@
         .notebook-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            gap: 12px;
             overflow-y: auto;
             padding-right: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .notebook-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 860px) {
+            .notebook-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .notebook-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* 笔记本卡片 */
@@ -493,18 +511,18 @@
         }
 
         .form-field {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .form-label {
-            position: absolute;
-            left: 12px;
-            top: -10px;
-            background: #fff;
-            padding: 0 6px;
-            font-size: 13px;
-            color: var(--text-secondary);
+            font-size: 15px;
             font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .form-label .required {
@@ -513,25 +531,137 @@
 
         .form-input {
             width: 100%;
-            height: 52px;
-            padding: 0 16px;
-            border: 1px solid #d0d0d0;
-            border-radius: 8px;
+            height: 56px;
+            padding: 0 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
             font-size: 15px;
             color: var(--text-primary);
             font-family: inherit;
-            background: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #f8fafc;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
             outline: none;
         }
 
         .form-input:focus {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+            border-color: #cbd5e1;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.12);
         }
 
         .form-input::placeholder {
-            color: var(--text-tertiary);
+            color: #94a3b8;
+        }
+
+        /* ========== 自定义 agent 下拉选择器 ========== */
+        .agent-select {
+            position: relative;
+        }
+
+        .agent-select-trigger {
+            width: 100%;
+            height: 56px;
+            padding: 0 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            user-select: none;
+        }
+
+        .agent-select-trigger:hover {
+            border-color: #cbd5e1;
+        }
+
+        .agent-select-trigger.active {
+            border-color: #cbd5e1;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.12);
+        }
+
+        .agent-select-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .agent-placeholder-text {
+            color: #94a3b8;
+        }
+
+        .agent-select-arrow {
+            width: 16px;
+            height: 16px;
+            color: #94a3b8;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .agent-select-trigger.active .agent-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .agent-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            max-height: 260px;
+            overflow-y: auto;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+            padding: 8px;
+        }
+
+        .agent-select-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .agent-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .agent-option:hover {
+            background: #f1f5f9;
+        }
+
+        .agent-option.selected {
+            background: #eff6ff;
+        }
+
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .agent-name {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         .edit-modal-actions {
@@ -691,7 +821,7 @@
                 <!-- 页面头部 -->
                 <div class="kb-header">
                     <h1 class="kb-title">知识库</h1>
-                    <button class="kb-new-btn">
+                    <button class="kb-new-btn" onclick="openNewModal()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
@@ -774,7 +904,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -805,7 +935,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -836,7 +966,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -867,7 +997,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -898,7 +1028,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -929,7 +1059,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -960,7 +1090,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -991,7 +1121,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1022,7 +1152,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1053,7 +1183,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1084,7 +1214,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1115,7 +1245,7 @@
                                 </svg>
                             </button>
                             <div class="notebook-menu">
-                                <div class="notebook-menu-item">
+                                <div class="notebook-menu-item" onclick="openEditModal(this)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1145,17 +1275,121 @@
     <div class="edit-modal">
         <div class="edit-modal-title">编辑知识库</div>
         <div class="edit-modal-icon">
-            <div class="icon-circle" id="editModalIcon">📓</div>
+            <div class="icon-circle" id="editModalIcon">
+                <span id="editModalIconEmoji">📓</span>
+                <img id="editModalIconImg" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+            </div>
         </div>
         <div class="edit-modal-form">
             <div class="form-field">
-                <label class="form-label" for="editNotebookTitle">知识库名称 <span class="required">*</span></label>
+                <label class="form-label" for="editNotebookTitle"><span class="required">*</span> 知识库名称</label>
                 <input type="text" class="form-input" id="editNotebookTitle" placeholder="输入知识库名称">
+            </div>
+            <div class="form-field" style="margin-top: 20px;">
+                <label class="form-label"><span class="required">*</span> 配置 agent</label>
+                <div class="agent-select" id="agentSelect">
+                    <div class="agent-select-trigger" onclick="toggleAgentDropdown()">
+                        <div class="agent-select-placeholder" id="agentSelectValue">
+                            <span class="agent-placeholder-text">请选择 agent</span>
+                        </div>
+                        <svg class="agent-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="agent-select-dropdown" id="agentSelectDropdown">
+                        <div class="agent-option" data-value="gpt-4" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20326.png" alt="GPT-4">
+                            <span class="agent-name">GPT-4</span>
+                        </div>
+                        <div class="agent-option" data-value="gpt-4o" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20327.png" alt="GPT-4o">
+                            <span class="agent-name">GPT-4o</span>
+                        </div>
+                        <div class="agent-option" data-value="claude-3" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20328.png" alt="Claude 3">
+                            <span class="agent-name">Claude 3</span>
+                        </div>
+                        <div class="agent-option" data-value="claude-3-5" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20329.png" alt="Claude 3.5">
+                            <span class="agent-name">Claude 3.5 Sonnet</span>
+                        </div>
+                        <div class="agent-option" data-value="gemini-pro" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20330.png" alt="Gemini Pro">
+                            <span class="agent-name">Gemini Pro</span>
+                        </div>
+                        <div class="agent-option" data-value="local-llm" onclick="selectAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20331.png" alt="本地大模型">
+                            <span class="agent-name">本地大模型</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="edit-modal-actions">
             <button class="modal-btn modal-btn-cancel" onclick="closeEditModal()">取消</button>
             <button class="modal-btn modal-btn-save" onclick="saveEditModal()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 新建知识库弹窗 -->
+<div class="edit-modal-overlay" id="newModalOverlay">
+    <div class="edit-modal">
+        <div class="edit-modal-title">新建知识库</div>
+        <div class="edit-modal-icon">
+            <div class="icon-circle" id="newModalIcon">
+                <span id="newModalIconEmoji">📓</span>
+                <img id="newModalIconImg" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+            </div>
+        </div>
+        <div class="edit-modal-form">
+            <div class="form-field">
+                <label class="form-label" for="newNotebookTitle"><span class="required">*</span> 知识库名称</label>
+                <input type="text" class="form-input" id="newNotebookTitle" placeholder="输入知识库名称">
+            </div>
+            <div class="form-field" style="margin-top: 20px;">
+                <label class="form-label"><span class="required">*</span> 配置 agent</label>
+                <div class="agent-select" id="newAgentSelect">
+                    <div class="agent-select-trigger" onclick="toggleNewAgentDropdown()">
+                        <div class="agent-select-placeholder" id="newAgentSelectValue">
+                            <span class="agent-placeholder-text">请选择 agent</span>
+                        </div>
+                        <svg class="agent-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                    <div class="agent-select-dropdown" id="newAgentSelectDropdown">
+                        <div class="agent-option" data-value="gpt-4" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20326.png" alt="GPT-4">
+                            <span class="agent-name">GPT-4</span>
+                        </div>
+                        <div class="agent-option" data-value="gpt-4o" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20327.png" alt="GPT-4o">
+                            <span class="agent-name">GPT-4o</span>
+                        </div>
+                        <div class="agent-option" data-value="claude-3" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20328.png" alt="Claude 3">
+                            <span class="agent-name">Claude 3</span>
+                        </div>
+                        <div class="agent-option" data-value="claude-3-5" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20329.png" alt="Claude 3.5">
+                            <span class="agent-name">Claude 3.5 Sonnet</span>
+                        </div>
+                        <div class="agent-option" data-value="gemini-pro" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20330.png" alt="Gemini Pro">
+                            <span class="agent-name">Gemini Pro</span>
+                        </div>
+                        <div class="agent-option" data-value="local-llm" onclick="selectNewAgent(this)">
+                            <img class="agent-avatar" src="avater/image%20331.png" alt="本地大模型">
+                            <span class="agent-name">本地大模型</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="edit-modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="closeNewModal()">取消</button>
+            <button class="modal-btn modal-btn-save" onclick="saveNewModal()">创建</button>
         </div>
     </div>
 </div>
@@ -1188,11 +1422,23 @@
 
             // 找到当前卡片
             currentEditingCard = el.closest('.notebook-card');
-            const icon = currentEditingCard.querySelector('.notebook-icon').textContent.trim();
+            const iconEl = currentEditingCard.querySelector('.notebook-icon');
             const name = currentEditingCard.querySelector('.notebook-name').textContent.trim();
 
-            // 填充弹窗
-            document.getElementById('editModalIcon').textContent = icon;
+            // 检查图标是图片还是 emoji
+            const iconImg = iconEl.querySelector('img');
+            if (iconImg) {
+                document.getElementById('editModalIconEmoji').style.display = 'none';
+                const editIconImg = document.getElementById('editModalIconImg');
+                editIconImg.src = iconImg.src;
+                editIconImg.style.display = 'block';
+            } else {
+                const icon = iconEl.textContent.trim();
+                document.getElementById('editModalIconEmoji').style.display = '';
+                document.getElementById('editModalIconEmoji').textContent = icon;
+                document.getElementById('editModalIconImg').style.display = 'none';
+            }
+
             document.getElementById('editNotebookTitle').value = name;
 
             // 显示弹窗
@@ -1209,6 +1455,15 @@
             if (!newName) return;
             if (currentEditingCard) {
                 currentEditingCard.querySelector('.notebook-name').textContent = newName;
+                // 更新图标
+                const iconEl = currentEditingCard.querySelector('.notebook-icon');
+                const editIconImg = document.getElementById('editModalIconImg');
+                if (editIconImg.style.display !== 'none' && editIconImg.src) {
+                    iconEl.innerHTML = '<img src="' + editIconImg.src + '" alt="icon" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+                } else {
+                    const emoji = document.getElementById('editModalIconEmoji').textContent;
+                    iconEl.textContent = emoji;
+                }
             }
             closeEditModal();
         }
@@ -1222,6 +1477,194 @@
         document.getElementById('editNotebookTitle').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') saveEditModal();
             if (e.key === 'Escape') closeEditModal();
+        });
+
+        // ===== agent 下拉选择器相关 =====
+        let selectedAgentValue = '';
+
+        function toggleAgentDropdown() {
+            const trigger = document.querySelector('.agent-select-trigger');
+            const dropdown = document.getElementById('agentSelectDropdown');
+            const isOpen = dropdown.classList.contains('active');
+
+            // 关闭其他下拉
+            document.querySelectorAll('.agent-select-dropdown').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.agent-select-trigger').forEach(t => t.classList.remove('active'));
+
+            if (!isOpen) {
+                dropdown.classList.add('active');
+                trigger.classList.add('active');
+            }
+        }
+
+        function selectAgent(el) {
+            const value = el.dataset.value;
+            const name = el.querySelector('.agent-name').textContent;
+            const avatar = el.querySelector('.agent-avatar').src;
+
+            selectedAgentValue = value;
+
+            // 更新触发器显示
+            const valueEl = document.getElementById('agentSelectValue');
+            valueEl.innerHTML = '<img class="agent-avatar" src="' + avatar + '" alt="' + name + '" style="width:28px;height:28px;"><span>' + name + '</span>';
+
+            // 同步更新编辑弹窗顶部图标为 agent 头像
+            document.getElementById('editModalIconEmoji').style.display = 'none';
+            const editIconImg = document.getElementById('editModalIconImg');
+            editIconImg.src = avatar;
+            editIconImg.style.display = 'block';
+
+            // 更新选中状态
+            document.querySelectorAll('.agent-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+
+            // 关闭下拉
+            document.getElementById('agentSelectDropdown').classList.remove('active');
+            document.querySelector('.agent-select-trigger').classList.remove('active');
+        }
+
+        // 点击外部关闭 agent 下拉
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.agent-select')) {
+                document.getElementById('agentSelectDropdown').classList.remove('active');
+                document.querySelector('.agent-select-trigger').classList.remove('active');
+            }
+        });
+
+        // ===== 新建知识库弹窗相关 =====
+        let newSelectedAgentValue = '';
+
+        function openNewModal() {
+            // 重置表单
+            document.getElementById('newNotebookTitle').value = '';
+            document.getElementById('newModalIconEmoji').style.display = '';
+            document.getElementById('newModalIconEmoji').textContent = '📓';
+            document.getElementById('newModalIconImg').style.display = 'none';
+            document.getElementById('newModalIconImg').src = '';
+
+            // 重置 agent 选择
+            newSelectedAgentValue = '';
+            document.getElementById('newAgentSelectValue').innerHTML = '<span class="agent-placeholder-text">请选择 agent</span>';
+            document.querySelectorAll('#newAgentSelectDropdown .agent-option').forEach(opt => opt.classList.remove('selected'));
+
+            // 显示弹窗
+            document.getElementById('newModalOverlay').classList.add('active');
+        }
+
+        function closeNewModal() {
+            document.getElementById('newModalOverlay').classList.remove('active');
+        }
+
+        function saveNewModal() {
+            const newName = document.getElementById('newNotebookTitle').value.trim();
+            if (!newName) return;
+
+            // 创建新卡片
+            const grid = document.querySelector('.notebook-grid');
+            const newCard = document.createElement('div');
+            newCard.className = 'notebook-card';
+
+            // 确定图标
+            let iconContent = '📓';
+            let iconIsImg = false;
+            let iconSrc = '';
+            if (newSelectedAgentValue) {
+                const selectedOpt = document.querySelector('#newAgentSelectDropdown .agent-option[data-value="' + newSelectedAgentValue + '"]');
+                if (selectedOpt) {
+                    iconSrc = selectedOpt.querySelector('.agent-avatar').src;
+                    iconIsImg = true;
+                }
+            }
+
+            if (iconIsImg) {
+                iconContent = '<img src="' + iconSrc + '" alt="icon" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+            }
+
+            newCard.innerHTML = '<div class="notebook-header">' +
+                '<div class="notebook-icon">' + iconContent + '</div>' +
+                '<button class="notebook-more" onclick="toggleNotebookMenu(this)">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>' +
+                '</svg></button>' +
+                '<div class="notebook-menu">' +
+                '<div class="notebook-menu-item" onclick="openEditModal(this)">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>' +
+                '<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>' +
+                '</svg>编辑</div>' +
+                '<div class="notebook-menu-item">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>' +
+                '</svg>删除</div>' +
+                '</div></div>' +
+                '<div class="notebook-name">' + newName + '</div>' +
+                '<div class="notebook-source">0 个来源</div>';
+
+            grid.insertBefore(newCard, grid.firstChild);
+            closeNewModal();
+        }
+
+        // 新建弹窗 agent 下拉
+        function toggleNewAgentDropdown() {
+            const trigger = document.querySelector('#newAgentSelect .agent-select-trigger');
+            const dropdown = document.getElementById('newAgentSelectDropdown');
+            const isOpen = dropdown.classList.contains('active');
+
+            // 关闭其他下拉
+            document.querySelectorAll('.agent-select-dropdown').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.agent-select-trigger').forEach(t => t.classList.remove('active'));
+
+            if (!isOpen) {
+                dropdown.classList.add('active');
+                trigger.classList.add('active');
+            }
+        }
+
+        function selectNewAgent(el) {
+            const value = el.dataset.value;
+            const name = el.querySelector('.agent-name').textContent;
+            const avatar = el.querySelector('.agent-avatar').src;
+
+            newSelectedAgentValue = value;
+
+            // 更新触发器显示
+            const valueEl = document.getElementById('newAgentSelectValue');
+            valueEl.innerHTML = '<img class="agent-avatar" src="' + avatar + '" alt="' + name + '" style="width:28px;height:28px;"><span>' + name + '</span>';
+
+            // 更新弹窗顶部图标为 agent 头像
+            document.getElementById('newModalIconEmoji').style.display = 'none';
+            const iconImg = document.getElementById('newModalIconImg');
+            iconImg.src = avatar;
+            iconImg.style.display = 'block';
+
+            // 更新选中状态
+            document.querySelectorAll('#newAgentSelectDropdown .agent-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+
+            // 关闭下拉
+            document.getElementById('newAgentSelectDropdown').classList.remove('active');
+            document.querySelector('#newAgentSelect .agent-select-trigger').classList.remove('active');
+        }
+
+        // 点击外部关闭新建弹窗 agent 下拉
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#newAgentSelect')) {
+                const dropdown = document.getElementById('newAgentSelectDropdown');
+                const trigger = document.querySelector('#newAgentSelect .agent-select-trigger');
+                if (dropdown) dropdown.classList.remove('active');
+                if (trigger) trigger.classList.remove('active');
+            }
+        });
+
+        // 新建弹窗回车保存
+        document.getElementById('newNotebookTitle').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') saveNewModal();
+            if (e.key === 'Escape') closeNewModal();
+        });
+
+        // 点击遮罩关闭新建弹窗
+        document.getElementById('newModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeNewModal();
         });
     </script>
 </body>
